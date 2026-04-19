@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ficha de Personagem — Tormenta RPG</title>
+
+  <!-- Arquivo de estilos -->
+  <link rel="stylesheet" href="Tormenta.css" />
+</head>
+<body>
+  <!-- Área principal da aplicação -->
+  <div class="app">
+
+    <!-- Barra superior com título e botões -->
+    <div class="toolbar">
+      <h1>Ficha de Personagem — Tormenta RPG</h1>
+
+      <div class="actions">
+        <button class="secondary" type="button" id="btnSave">Salvar ficha</button>
+        <button class="secondary" type="button" id="btnClear">Limpar ficha</button>
+        <button class="secondary" type="button" id="btnExport">Exportar ficha</button>
+        <button class="secondary" type="button" onclick="window.location.href='../Visualizar-Fichas/Fichas.html'">Minhas Fichas</button>
+      </div>
+    </div>
+
+    <!-- Área com rolagem horizontal caso a tela seja pequena -->
+    <div class="sheet-wrap">
+      <!-- Formulário principal da ficha -->
+      <form class="sheet" id="characterSheet">
+
+        <!-- Cabeçalho com campos principais -->
+        <div class="header">
+          <div class="hero-card">
+            <div class="card-head">Ficha de Personagem</div>
+
+            <!-- Primeira linha de campos -->
+            <div class="top-grid">
+              <div class="field">
+                <label for="personagem">Nome do personagem</label>
+                <input id="personagem" name="personagem" type="text" placeholder="Digite o nome" />
+              </div>
+
+              <div class="field">
+                <label for="jogador">Jogador</label>
+                <input id="jogador" name="jogador" type="text" placeholder="Seu nome" />
+              </div>
+
+              <div class="field">
+                <label for="campanha">Campanha</label>
+                <input id="campanha" name="campanha" type="text" placeholder="Nome da campanha" />
+              </div>
+            </div>
+
+            <!-- Segunda linha de campos -->
+            <div class="top-grid">
+              <div class="field">
+                <label for="raca">Raça</label>
+                <input id="raca" name="raca" type="text" placeholder="Ex.: Humano" />
+              </div>
+
+              <div class="field">
+                <label for="classeNivel">Classe &amp; nível</label>
+                <input id="classeNivel" name="classeNivel" type="text" placeholder="Ex.: Guerreiro 3" />
+              </div>
+
+              <div class="field">
+                <label for="tendencia">Tendência</label>
+                <input id="tendencia" name="tendencia" type="text" placeholder="Ex.: Neutro e bom" />
+              </div>
+            </div>
+
+            <!-- Terceira linha de campos -->
+            <div class="top-grid">
+              <div class="field">
+                <label for="divindade">Divindade</label>
+                <input id="divindade" name="divindade" type="text" placeholder="Se houver" />
+              </div>
+
+              <div class="field">
+                <label for="origem">Origem</label>
+                <input id="origem" name="origem" type="text" placeholder="Ex.: Herói camponês" />
+              </div>
+
+              <div class="field">
+                <label for="foco">Estilo / foco</label>
+                <input id="foco" name="foco" type="text" placeholder="Ex.: espada e escudo" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seção de atributos -->
+        <div class="section-title">Atributos</div>
+        <div class="ability-grid" id="abilities"></div>
+
+        <!-- Seção de recursos -->
+        <div class="section-title">Recursos</div>
+        <div class="quick-stats">
+          <div class="mini">
+            <label for="pv">PV</label>
+            <input id="pv" name="pv" type="number" placeholder="0" />
+          </div>
+
+          <div class="mini">
+            <label for="pm">PM</label>
+            <input id="pm" name="pm" type="number" placeholder="0" />
+          </div>
+
+          <div class="mini">
+            <label for="ca">CA</label>
+            <input id="ca" name="ca" type="number" placeholder="0" />
+          </div>
+
+          <div class="mini">
+            <label for="deslocamento">Deslocamento</label>
+            <input id="deslocamento" name="deslocamento" type="text" placeholder="9 m" />
+          </div>
+        </div>
+
+        <!-- Seção de defesas -->
+        <div class="section-title">Defesas</div>
+        <div class="quick-stats">
+          <div class="mini">
+            <label for="bba">Bônus Base de Ataque</label>
+            <input id="bba" name="bba" type="number" placeholder="0" />
+          </div>
+
+          <div class="mini">
+            <label for="iniciativa">Iniciativa</label>
+            <input id="iniciativa" name="iniciativa" type="number" placeholder="0" />
+          </div>
+
+          <div class="mini">
+            <label for="fortitude">Fortitude</label>
+            <input id="fortitude" name="fortitude" type="number" placeholder="0" />
+          </div>
+
+          <div class="mini">
+            <label for="reflexos">Reflexos</label>
+            <input id="reflexos" name="reflexos" type="number" placeholder="0" />
+          </div>
+        </div>
+
+        <!-- Seção de extras -->
+        <div class="section-title">Extras</div>
+        <div class="quick-stats">
+          <div class="mini">
+            <label for="vontade">Vontade</label>
+            <input id="vontade" name="vontade" type="number" placeholder="0" />
+          </div>
+
+          <div class="mini">
+            <label for="percepcao">Percepção</label>
+            <input id="percepcao" name="percepcao" type="number" placeholder="0" />
+          </div>
+
+          <div class="mini">
+            <label for="carga">Carga / peso</label>
+            <input id="carga" name="carga" type="text" placeholder="Leve, média, pesada" />
+          </div>
+
+          <div class="mini">
+            <label for="dinheiro">Dinheiro</label>
+            <input id="dinheiro" name="dinheiro" type="text" placeholder="T$ / moedas" />
+          </div>
+
+          <!-- Campo destacado para Ponto de Ação -->
+          <div class="mini action-point">
+            <label for="ponto_acao">Ponto de Ação</label>
+            <input id="ponto_acao" name="ponto_acao" type="number" placeholder="0" />
+          </div>
+        </div>
+
+        <!-- Seção de ataques -->
+        <div class="section-title">Ataques</div>
+        <div class="combat-grid">
+          <div class="table-card">
+            <div class="card-head">Corpo-a-corpo</div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Nome</th><th>Ataque</th><th>Dano</th><th>Crit.</th><th>Tipo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="text" name="cc_nome_1" placeholder="Arma 1" /></td>
+                  <td><input type="text" name="cc_ataque_1" /></td>
+                  <td><input type="text" name="cc_dano_1" /></td>
+                  <td><input type="text" name="cc_crit_1" /></td>
+                  <td><input type="text" name="cc_tipo_1" /></td>
+                </tr>
+                <tr>
+                  <td><input type="text" name="cc_nome_2" placeholder="Arma 2" /></td>
+                  <td><input type="text" name="cc_ataque_2" /></td>
+                  <td><input type="text" name="cc_dano_2" /></td>
+                  <td><input type="text" name="cc_crit_2" /></td>
+                  <td><input type="text" name="cc_tipo_2" /></td>
+                </tr>
+                <tr>
+                  <td><input type="text" name="cc_nome_3" placeholder="Arma 3" /></td>
+                  <td><input type="text" name="cc_ataque_3" /></td>
+                  <td><input type="text" name="cc_dano_3" /></td>
+                  <td><input type="text" name="cc_crit_3" /></td>
+                  <td><input type="text" name="cc_tipo_3" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-card">
+            <div class="card-head">À distância</div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Nome</th><th>Ataque</th><th>Dano</th><th>Alcance</th><th>Munição</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="text" name="dist_nome_1" placeholder="Arma 1" /></td>
+                  <td><input type="text" name="dist_ataque_1" /></td>
+                  <td><input type="text" name="dist_dano_1" /></td>
+                  <td><input type="text" name="dist_alcance_1" /></td>
+                  <td><input type="text" name="dist_municao_1" /></td>
+                </tr>
+                <tr>
+                  <td><input type="text" name="dist_nome_2" placeholder="Arma 2" /></td>
+                  <td><input type="text" name="dist_ataque_2" /></td>
+                  <td><input type="text" name="dist_dano_2" /></td>
+                  <td><input type="text" name="dist_alcance_2" /></td>
+                  <td><input type="text" name="dist_municao_2" /></td>
+                </tr>
+                <tr>
+                  <td><input type="text" name="dist_nome_3" placeholder="Arma 3" /></td>
+                  <td><input type="text" name="dist_ataque_3" /></td>
+                  <td><input type="text" name="dist_dano_3" /></td>
+                  <td><input type="text" name="dist_alcance_3" /></td>
+                  <td><input type="text" name="dist_municao_3" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Seção de inventário e equipamento -->
+        <div class="section-title">Inventário &amp; Equipamento</div>
+
+        <!-- Lista de armas -->
+        <div class="table-card armas" style="margin-bottom:12px;">
+          <div class="card-head">Armas</div>
+          <div class="grid-row head">
+            <div>Nome</div><div>Tipo</div><div>Dano</div><div>Crítico</div><div>Alcance</div><div>Obs.</div>
+          </div>
+          <div id="armasRows"></div>
+        </div>
+
+        <!-- Coluna dupla: defesa e perícias -->
+        <div class="two-col">
+          <div>
+            <div class="section-title">Defesa</div>
+
+            <!-- Lista de armaduras -->
+            <div class="table-card armaduras" style="margin-bottom:12px;">
+              <div class="card-head">Armadura / Escudo</div>
+              <div class="grid-row head">
+                <div>Nome</div><div>Tipo</div><div>CA</div><div>Max. DES</div><div>Penalidade</div><div>Obs.</div>
+              </div>
+              <div id="armadurasRows"></div>
+            </div>
+
+            <!-- Marcadores e condições -->
+            <div class="table-card" style="margin-bottom:12px;">
+              <div class="card-head">Condições / marcadores</div>
+              <div style="padding:12px 14px 14px;">
+                <div class="checkbox-grid">
+                  <label class="check">
+                    <div class="check-label">
+                      <input type="checkbox" name="marcador_1" />
+                      <span></span>
+                    </div>
+                    <input class="marker-input" type="text" name="marcador_1_obs" placeholder="Marcador ou observação" />
+                  </label>
+
+                  <label class="check">
+                    <div class="check-label">
+                      <input type="checkbox" name="marcador_2" />
+                      <span></span>
+                    </div>
+                    <input class="marker-input" type="text" name="marcador_2_obs" placeholder="Marcador ou observação" />
+                  </label>
+
+                  <label class="check">
+                    <div class="check-label">
+                      <input type="checkbox" name="marcador_3" />
+                      <span></span>
+                    </div>
+                    <input class="marker-input" type="text" name="marcador_3_obs" placeholder="Marcador ou observação" />
+                  </label>
+
+                  <label class="check">
+                    <div class="check-label">
+                      <input type="checkbox" name="marcador_4" />
+                      <span></span>
+                    </div>
+                    <input class="marker-input" type="text" name="marcador_4_obs" placeholder="Marcador ou observação" />
+                  </label>
+
+                  <label class="check">
+                    <div class="check-label">
+                      <input type="checkbox" name="marcador_5" />
+                      <span></span>
+                    </div>
+                    <input class="marker-input" type="text" name="marcador_5_obs" placeholder="Marcador ou observação" />
+                  </label>
+
+                  <label class="check">
+                    <div class="check-label">
+                      <input type="checkbox" name="marcador_6" />
+                      <span></span>
+                    </div>
+                    <input class="marker-input" type="text" name="marcador_6_obs" placeholder="Marcador ou observação" />
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Blocos de texto -->
+            <div class="notes-grid" style="margin-top:0;">
+              <div class="panel">
+                <h2>Habilidades de raça</h2>
+                <div class="large-note">
+                  <textarea name="habilidades_raca" placeholder="Descreva as habilidades de raça aqui..."></textarea>
+                </div>
+              </div>
+
+              <div class="panel">
+                <h2>Habilidades de classe</h2>
+                <div class="large-note">
+                  <textarea name="habilidades_classe" placeholder="Descreva as habilidades de classe aqui..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="notes-grid">
+              <div class="panel">
+                <h2>Equipamentos / Inventário</h2>
+                <div class="large-note">
+                  <textarea name="inventario" placeholder="Itens, poções, munição, ferramentas..."></textarea>
+                </div>
+              </div>
+
+              <div class="panel">
+                <h2>Observações</h2>
+                <div class="large-note">
+                  <textarea name="observacoes" placeholder="Anotações gerais, contatos, objetivos, etc."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="notes-grid notes-grid--wide">
+              <div class="panel">
+                <h2>Magias</h2>
+                <div class="large-note large-note--scroll">
+                  <textarea name="magias" placeholder="Liste aqui todas as suas magias... Quanto mais melhor."></textarea>
+                </div>
+              </div>
+
+              <div class="panel">
+                <h2>Talentos</h2>
+                <div class="large-note large-note--scroll">
+                  <textarea name="talentos" placeholder="Liste aqui todos os seus talentos e características especiais."></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Coluna das perícias -->
+          <div>
+            <div class="skills-wrap">
+              <div class="skills-head">
+                <div>Perícias</div>
+                <div>Bônus</div>
+                <div>Grad.</div>
+                <div>Mod.</div>
+                <div>Total</div>
+              </div>
+              <div class="skills-body" id="skillsBody"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rodapé -->
+        <div class="footer">
+          Ficha digital editável com cálculo automático de modificadores, total de perícias e salvamento local no navegador.
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Arquivo JavaScript -->
+  <script src="Tormenta.js"></script>
+</body>
+</html>

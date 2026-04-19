@@ -1,0 +1,784 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Minhas Fichas — Tormenta RPG</title>
+  <style>
+    :root {
+      --bg: #f4f3ef;
+      --card: #ffffff;
+      --ink: #141414;
+      --muted: #666;
+      --line: rgba(20,20,20,.14);
+      --line-strong: rgba(20,20,20,.22);
+      --accent: #171717;
+      --accent-soft: #2b2b2b;
+      --success: #10b981;
+      --danger: #ef4444;
+      --radius: 22px;
+      --shadow: 0 16px 42px rgba(0,0,0,.08);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      min-height: 100vh;
+      background: #f7f4ee;
+      color: var(--ink);
+    }
+
+    .app {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px 18px 40px;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .title-block h1 {
+      margin: 0;
+      font-size: clamp(1.5rem, 3vw, 2.3rem);
+      letter-spacing: -.02em;
+    }
+
+    .title-block p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      max-width: 640px;
+      line-height: 1.5;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .button {
+      appearance: none;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 999px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(0,0,0,.08);
+      transition: transform .15s ease, opacity .15s ease, background .15s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 46px;
+    }
+
+    .button:hover { transform: translateY(-1px); opacity: .96; }
+    .button.secondary {
+      background: white;
+      color: var(--ink);
+      border-color: var(--line-strong);
+    }
+
+    .panel {
+      background: rgba(255,255,255,.8);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+
+    .creator {
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+
+    .creator-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .creator-head h2 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .creator-head span {
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: .84rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: #343434;
+    }
+
+    .field input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: white;
+      padding: 13px 14px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+
+    .field input:focus {
+      border-color: var(--accent-soft);
+      box-shadow: 0 0 0 4px rgba(23,23,23,.08);
+    }
+
+    .creator-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .list-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 8px 0 12px;
+    }
+
+    .list-head .count {
+      color: var(--muted);
+      font-size: .96rem;
+      font-weight: 700;
+    }
+
+    .search {
+      min-width: min(100%, 320px);
+    }
+
+    .search input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: white;
+      padding: 12px 16px;
+      outline: none;
+      font-size: 1rem;
+    }
+
+    .cards-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(90deg, var(--accent), #555);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      letter-spacing: -.01em;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #f4f4f2;
+      color: #343434;
+      font-size: .84rem;
+      font-weight: 700;
+      border: 1px solid rgba(0,0,0,.08);
+      white-space: nowrap;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 14px;
+      margin-top: 16px;
+    }
+
+    .meta {
+      padding: 12px 14px;
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 16px;
+      background: #fbfbfa;
+    }
+
+    .meta span {
+      display: block;
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--muted);
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    .meta strong {
+      display: block;
+      font-size: 1rem;
+      word-break: break-word;
+    }
+
+    .card-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .button.danger {
+      background: var(--danger);
+      border-color: var(--danger);
+    }
+
+    .button.small {
+      min-height: 42px;
+      padding: 10px 14px;
+      font-size: .95rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 42px 20px;
+      border-radius: 24px;
+      border: 1.5px dashed rgba(0,0,0,.2);
+      background: rgba(255,255,255,.72);
+      color: var(--muted);
+    }
+
+    .empty-state strong {
+      display: block;
+      color: var(--ink);
+      margin-top: 10px;
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 9999;
+      padding: 14px 16px;
+      border-radius: 14px;
+      color: white;
+      font-weight: 800;
+      box-shadow: 0 14px 30px rgba(0,0,0,.18);
+      transform: translateY(16px);
+      opacity: 0;
+      transition: opacity .2s ease, transform .2s ease;
+      pointer-events: none;
+      max-width: min(92vw, 360px);
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.success { background: var(--success); }
+    .toast.error { background: var(--danger); }
+    .toast.info { background: #2563eb; }
+
+    dialog {
+      position: fixed;
+      inset: 0;
+      margin: auto;
+      border: none;
+      border-radius: 28px;
+      padding: 0;
+      width: min(92vw, 420px);
+      max-width: 420px;
+      max-height: calc(100vh - 40px);
+      background: transparent;
+      box-shadow: 0 32px 90px rgba(0,0,0,.18);
+      overflow: hidden;
+    }
+
+    dialog::backdrop {
+      background: rgba(15,23,42,.42);
+      backdrop-filter: blur(2px);
+    }
+
+    .dialog-box {
+      padding: 24px;
+      background: #ffffff;
+      border-radius: 28px;
+      box-shadow: inset 0 0 0 1px rgba(15,23,42,.04);
+    }
+
+    .dialog-box h4 {
+      margin: 0 0 8px;
+      font-size: 1.15rem;
+      color: var(--ink);
+    }
+
+    .dialog-box p {
+      margin: 0 0 18px;
+      color: #4f5461;
+      line-height: 1.6;
+    }
+
+    .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .dialog-actions .button {
+      min-width: 110px;
+    }
+
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: 1fr; }
+      .search { min-width: 100%; }
+    }
+
+    @media (max-width: 640px) {
+      .app { padding: 16px 12px 28px; }
+      .title-block p { font-size: .96rem; }
+      .card, .creator { padding: 16px; border-radius: 20px; }
+      .button { width: 100%; }
+      .toolbar-actions { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="toolbar">
+      <div class="title-block">
+        <h1>Minhas Fichas</h1>
+        <p>Veja todas as fichas criadas, adicione novas e exclua as que não quiser mais manter.</p>
+      </div>
+    </header>
+
+    <section class="panel creator" aria-label="Adicionar nova ficha">
+      <div class="creator-head">
+        <div>
+          <h2>Adicionar nova ficha</h2>
+          <span>Preencha só o que quiser mostrar na lista.</span>
+        </div>
+      </div>
+
+      <form id="addFichaForm" autocomplete="off">
+        <div class="grid">
+          <div class="field">
+            <label for="personagem">Nome do personagem</label>
+            <input id="personagem" name="personagem" type="text" placeholder="Ex.: Kael" required />
+          </div>
+          <div class="field">
+            <label for="jogador">Jogador</label>
+            <input id="jogador" name="jogador" type="text" placeholder="Ex.: Marlon" required />
+          </div>
+          <div class="field">
+            <label for="campanha">Campanha</label>
+            <input id="campanha" name="campanha" type="text" placeholder="Ex.: A Guerra do Norte" required />
+          </div>
+          <div class="field">
+            <label for="raca">Raça</label>
+            <input id="raca" name="raca" type="text" placeholder="Ex.: Humano" />
+          </div>
+          <div class="field">
+            <label for="classeNivel">Classe &amp; nível</label>
+            <input id="classeNivel" name="classeNivel" type="text" placeholder="Ex.: Guerreiro 3" />
+          </div>
+          <div class="field">
+            <label for="status">Status</label>
+            <input id="status" name="status" type="text" placeholder="Ex.: Em progresso" />
+          </div>
+        </div>
+
+        <div class="creator-actions">
+          <button class="button" type="submit">Adicionar ficha</button>
+          <button class="button secondary" type="button" id="btnClearForm">Limpar campos</button>
+        </div>
+      </form>
+    </section>
+
+    <div class="list-head">
+      <div class="count" id="countText">0 fichas salvas</div>
+      <div class="search">
+        <input id="searchInput" type="search" placeholder="Pesquisar por nome, jogador, campanha..." />
+      </div>
+    </div>
+
+    <main id="fichaList" class="cards-grid" aria-live="polite"></main>
+  </div>
+
+  <dialog id="confirmDialog">
+    <div class="dialog-box">
+      <h4>Excluir ficha?</h4>
+      <p id="confirmText">Essa ação não pode ser desfeita.</p>
+      <div class="dialog-actions">
+        <button class="button secondary small" type="button" id="btnCancelDelete">Cancelar</button>
+        <button class="button danger small" type="button" id="btnConfirmDelete">Excluir</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const STORAGE_KEY = 'tormenta_rpg_fichas_v2';
+
+    const form = document.getElementById('addFichaForm');
+    const fichaList = document.getElementById('fichaList');
+    const searchInput = document.getElementById('searchInput');
+    const countText = document.getElementById('countText');
+    const toast = document.getElementById('toast');
+    const confirmDialog = document.getElementById('confirmDialog');
+    const confirmText = document.getElementById('confirmText');
+    const btnConfirmDelete = document.getElementById('btnConfirmDelete');
+    const btnCancelDelete = document.getElementById('btnCancelDelete');
+
+    let fichaToDelete = null;
+    let editingFichaId = null;
+
+    function loadFichas() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return [];
+      try {
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveFichas(fichas) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(fichas));
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function formatDate(iso) {
+      if (!iso) return '-';
+      const date = new Date(iso);
+      return new Intl.DateTimeFormat('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }).format(date);
+    }
+
+    function showToast(message, type = 'success') {
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => toast.classList.remove('show'), 2400);
+    }
+
+    function setEditMode(ficha) {
+      editingFichaId = ficha.id;
+      form.personagem.value = ficha.personagem || '';
+      form.jogador.value = ficha.jogador || '';
+      form.campanha.value = ficha.campanha || '';
+      form.raca.value = ficha.raca || '';
+      form.classeNivel.value = ficha.classeNivel || '';
+      form.status.value = ficha.status || '';
+      document.querySelector('#addFichaForm button[type="submit"]').textContent = 'Atualizar ficha';
+      showToast('Modo edição ativado. Faça as alterações e salve.', 'info');
+      form.personagem.focus();
+    }
+
+    function resetEditMode() {
+      editingFichaId = null;
+      document.querySelector('#addFichaForm button[type="submit"]').textContent = 'Adicionar ficha';
+    }
+
+    function createCard(ficha) {
+      return `
+        <article class="card" data-id="${ficha.id}">
+          <div class="card-top">
+            <div>
+              <h3>${escapeHTML(ficha.personagem || 'Ficha sem nome')}</h3>
+              <div class="badge" style="margin-top:10px;">Criada em ${formatDate(ficha.createdAt)}</div>
+            </div>
+            <div class="badge">${escapeHTML(ficha.status || 'Sem status')}</div>
+          </div>
+
+          <div class="meta-grid">
+            <div class="meta">
+              <span>Jogador</span>
+              <strong>${escapeHTML(ficha.jogador || '-')}</strong>
+            </div>
+            <div class="meta">
+              <span>Campanha</span>
+              <strong>${escapeHTML(ficha.campanha || '-')}</strong>
+            </div>
+            <div class="meta">
+              <span>Raça</span>
+              <strong>${escapeHTML(ficha.raca || '-')}</strong>
+            </div>
+            <div class="meta">
+              <span>Classe &amp; nível</span>
+              <strong>${escapeHTML(ficha.classeNivel || '-')}</strong>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <button type="button" class="button small" data-edit="${ficha.id}">Editar</button>
+            <button type="button" class="button secondary small" data-open="${ficha.id}">Abrir</button>
+            <button type="button" class="button danger small" data-delete="${ficha.id}">Excluir</button>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderFichas() {
+      const fichas = loadFichas();
+      const term = searchInput.value.trim().toLowerCase();
+
+      const filtered = fichas.filter((ficha) => {
+        const text = [
+          ficha.personagem,
+          ficha.jogador,
+          ficha.campanha,
+          ficha.raca,
+          ficha.classeNivel,
+          ficha.status
+        ].join(' ').toLowerCase();
+        return text.includes(term);
+      });
+
+      countText.textContent = `${fichas.length} ficha${fichas.length === 1 ? '' : 's'} salva${fichas.length === 1 ? '' : 's'}` + (term ? ` · ${filtered.length} encontrada${filtered.length === 1 ? '' : 's'}` : '');
+
+      if (!filtered.length) {
+        fichaList.innerHTML = `
+          <div class="empty-state">
+            Nenhuma ficha encontrada.
+            <strong>${fichas.length ? 'Tente outro termo de busca.' : 'Crie sua primeira ficha acima.'}</strong>
+          </div>
+        `;
+        return;
+      }
+
+      fichaList.innerHTML = filtered.map(createCard).join('');
+    }
+
+    function openFicha(id) {
+      localStorage.setItem('tormenta_rpg_selected_ficha_id', id);
+      localStorage.removeItem('tormenta_rpg_ficha_v2');
+      window.location.href = '../FIchasTela/Tormenta.html';
+    }
+
+    function downloadFicha(id) {
+      const ficha = loadFichas().find(item => item.id === id);
+      if (!ficha) {
+        showToast('Ficha não encontrada para download.', 'error');
+        return;
+      }
+
+      const filename = `ficha-${(ficha.personagem || 'sem-nome').replace(/[^a-zA-Z0-9-_]/g, '_')}.json`;
+      const blob = new Blob([JSON.stringify(ficha, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      showToast('Download iniciado. Verifique a pasta de downloads.', 'success');
+    }
+
+    function openDeleteDialog(id) {
+      fichaToDelete = id;
+      const ficha = loadFichas().find(item => item.id === id);
+      confirmText.textContent = ficha
+        ? `Tem certeza que deseja excluir “${ficha.personagem || 'esta ficha'}”? Essa ação não pode ser desfeita.`
+        : 'Tem certeza que deseja excluir esta ficha? Essa ação não pode ser desfeita.';
+      confirmDialog.showModal();
+    }
+
+    function deleteFicha(id) {
+      const fichas = loadFichas().filter(item => item.id !== id);
+      saveFichas(fichas);
+      renderFichas();
+      showToast('Ficha excluída com sucesso.', 'success');
+    }
+
+    function handleAddFicha(event) {
+      event.preventDefault();
+
+      const personagem = form.personagem.value.trim();
+      const jogador = form.jogador.value.trim();
+      const campanha = form.campanha.value.trim();
+      const raca = form.raca.value.trim();
+      const classeNivel = form.classeNivel.value.trim();
+      const status = form.status.value.trim();
+
+      if (!personagem || !jogador || !campanha) {
+        showToast('Preencha nome, jogador e campanha.', 'error');
+        return;
+      }
+
+      const fichas = loadFichas();
+      if (editingFichaId) {
+        const index = fichas.findIndex(item => item.id === editingFichaId);
+        if (index !== -1) {
+          fichas[index] = {
+            ...fichas[index],
+            personagem,
+            jogador,
+            campanha,
+            raca,
+            classeNivel,
+            status
+          };
+          saveFichas(fichas);
+          renderFichas();
+          showToast('Ficha atualizada com sucesso.', 'success');
+          form.reset();
+          resetEditMode();
+          return;
+        }
+      }
+
+      fichas.unshift({
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        personagem,
+        jogador,
+        campanha,
+        raca,
+        classeNivel,
+        status,
+        createdAt: new Date().toISOString()
+      });
+
+      saveFichas(fichas);
+      form.reset();
+      renderFichas();
+      showToast('Ficha adicionada com sucesso.', 'success');
+    }
+
+    function clearForm() {
+      form.reset();
+      resetEditMode();
+      form.personagem.focus();
+    }
+
+    form.addEventListener('submit', handleAddFicha);
+    document.getElementById('btnClearForm').addEventListener('click', clearForm);
+    searchInput.addEventListener('input', renderFichas);
+
+    fichaList.addEventListener('click', (event) => {
+      const deleteBtn = event.target.closest('[data-delete]');
+      if (deleteBtn) {
+        openDeleteDialog(deleteBtn.dataset.delete);
+        return;
+      }
+
+      const editBtn = event.target.closest('[data-edit]');
+      if (editBtn) {
+        const ficha = loadFichas().find(item => item.id === editBtn.dataset.edit);
+        if (ficha) setEditMode(ficha);
+        return;
+      }
+
+      const openBtn = event.target.closest('[data-open]');
+      if (openBtn) {
+        openFicha(openBtn.dataset.open);
+        return;
+      }
+
+      const downloadBtn = event.target.closest('[data-download]');
+      if (downloadBtn) {
+        downloadFicha(downloadBtn.dataset.download);
+        return;
+      }
+    });
+
+    btnCancelDelete.addEventListener('click', () => {
+      fichaToDelete = null;
+      confirmDialog.close();
+    });
+
+    btnConfirmDelete.addEventListener('click', () => {
+      if (!fichaToDelete) return;
+      deleteFicha(fichaToDelete);
+      fichaToDelete = null;
+      confirmDialog.close();
+    });
+
+    confirmDialog.addEventListener('click', (event) => {
+      const rect = confirmDialog.getBoundingClientRect();
+      const clickedInDialog = (
+        rect.top <= event.clientY &&
+        event.clientY <= rect.top + rect.height &&
+        rect.left <= event.clientX &&
+        event.clientX <= rect.left + rect.width
+      );
+      if (!clickedInDialog) confirmDialog.close();
+    });
+
+    renderFichas();
+  </script>
+</body>
+</html>

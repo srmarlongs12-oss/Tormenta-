@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tormenta RPG - Guilda do Macaco</title>
+  <style>
+    :root {
+      --bg-1: #050403;
+      --bg-2: #100d0b;
+      --gold: rgba(255, 220, 150, 0.95);
+      --ember: rgba(255, 140, 70, 0.95);
+      --shadow: rgba(0, 0, 0, 0.7);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+      font-family: Georgia, 'Times New Roman', serif;
+      background:
+        radial-gradient(circle at center, rgba(255, 220, 150, 0.08), transparent 24%),
+        radial-gradient(circle at 50% 30%, rgba(120, 70, 20, 0.18), transparent 38%),
+        linear-gradient(180deg, var(--bg-2), var(--bg-1));
+    }
+
+    .intro {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 18px;
+      background:
+        radial-gradient(circle at center, rgba(255, 232, 180, 0.10), transparent 18%),
+        radial-gradient(circle at center, rgba(255, 196, 104, 0.06), transparent 34%),
+        linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.88));
+      opacity: 0;
+      animation: appear 1.2s ease forwards;
+      z-index: 1;
+    }
+
+    .intro {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at center, rgba(255, 232, 180, 0.10), transparent 18%),
+        radial-gradient(circle at center, rgba(255, 196, 104, 0.06), transparent 34%),
+        linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.88));
+      opacity: 0;
+      animation: appear 1.2s ease forwards;
+      z-index: 1;
+    }
+
+    .intro::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at center, rgba(255, 220, 150, 0.12), transparent 16%),
+        radial-gradient(circle at center, rgba(255, 150, 70, 0.08), transparent 36%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .logo-wrap {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      animation: floatIn 1.4s ease forwards, logoPulse 3.5s ease-in-out infinite;
+      filter: drop-shadow(0 0 18px rgba(255, 210, 120, 0.24))
+              drop-shadow(0 0 44px rgba(255, 150, 80, 0.12));
+      padding: 30px 28px 26px;
+      border-radius: 30px;
+      background: rgba(7, 5, 3, 0.24);
+      border: 1px solid rgba(255, 220, 150, 0.12);
+      backdrop-filter: blur(14px);
+      max-width: min(90vw, 820px);
+      width: 100%;
+      gap: 18px;
+      overflow: hidden;
+    }
+
+    .logo-wrap::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(255, 210, 130, 0.12), transparent 42%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .logo-img {
+      max-width: min(72vw, 760px);
+      max-height: 58vh;
+      width: auto;
+      height: auto;
+      opacity: 0;
+      transform: translateY(12px) scale(0.98);
+      animation: textRise 1.35s ease forwards;
+      animation-delay: 0.15s;
+      user-select: none;
+      -webkit-user-drag: none;
+      image-rendering: auto;
+      z-index: 1;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      color: rgba(247, 243, 234, 0.92);
+      font-size: 0.98rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-shadow: 0 2px 16px rgba(0, 0, 0, 0.75);
+      opacity: 0;
+      animation: textRise 1.2s ease forwards;
+      animation-delay: 0.6s;
+      max-width: 92%;
+      text-align: center;
+      line-height: 1.5;
+      z-index: 1;
+    }
+
+    .particles,
+    .embers {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .particles span,
+    .embers span {
+      position: absolute;
+      display: block;
+      border-radius: 50%;
+      opacity: 0.7;
+      will-change: transform, opacity;
+    }
+
+    .particles span {
+      background: var(--gold);
+      box-shadow: 0 0 10px rgba(255, 210, 120, 0.75);
+      animation: driftUp linear infinite;
+    }
+
+    .embers span {
+      background: var(--ember);
+      box-shadow: 0 0 10px rgba(255, 120, 50, 0.65);
+      animation: emberRise ease-in infinite;
+      filter: blur(0.2px);
+    }
+
+    .vignette {
+      position: fixed;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+      background: radial-gradient(circle at center, transparent 36%, rgba(0,0,0,.58) 100%);
+    }
+
+    .fadeOut {
+      animation: fadeAway 1.4s ease forwards;
+    }
+
+    @keyframes appear {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes floatIn {
+      0% { opacity: 0; transform: translateY(22px) scale(0.94); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes textRise {
+      0% { opacity: 0; transform: translateY(22px); filter: blur(4px); }
+      100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+
+    @keyframes logoPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.018); }
+    }
+
+    @keyframes driftUp {
+      from { transform: translateY(110vh) translateX(0) scale(0.8); opacity: 0; }
+      15% { opacity: 0.85; }
+      to { transform: translateY(-14vh) translateX(18px) scale(1.1); opacity: 0; }
+    }
+
+    @keyframes emberRise {
+      from { transform: translateY(108vh) translateX(0) scale(0.7); opacity: 0; }
+      20% { opacity: 0.85; }
+      100% { transform: translateY(-18vh) translateX(-30px) scale(1.25); opacity: 0; }
+    }
+
+    @keyframes fadeAway {
+      from { opacity: 1; filter: blur(0); transform: scale(1); }
+      to { opacity: 0; filter: blur(10px); transform: scale(1.08); }
+    }
+
+    @media (max-width: 768px) {
+      .logo-wrap {
+        padding: 24px 18px 20px;
+      }
+
+      .logo-img { max-height: 48vh; max-width: 86vw; }
+      .subtitle { letter-spacing: .14em; font-size: .82rem; }
+    }
+
+    @media (max-width: 600px) {
+      .logo-wrap {
+        padding: 20px 16px 18px;
+      }
+
+      .logo-img { max-width: 92vw; max-height: 42vh; }
+      .subtitle { font-size: .78rem; }
+    }
+
+    @media (max-width: 480px) {
+      .logo-wrap {
+        padding: 18px 14px 16px;
+      }
+
+      .logo-img { max-height: 34vh; max-width: 92vw; }
+      .subtitle { font-size: .68rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="intro" id="intro">
+    <div class="logo-wrap">
+      <img id="logo" class="logo-img" src="Img/TormentaLOGO.png" alt="Tormenta RPG - Guilda do Macaco" />
+      <div class="subtitle">Prepare-se para o Caos</div>
+    </div>
+  </div>
+
+  <div class="particles" id="particles"></div>
+  <div class="embers" id="embers"></div>
+  <div class="vignette"></div>
+
+  <script>
+    const intro = document.getElementById('intro');
+    const particles = document.getElementById('particles');
+    const embers = document.getElementById('embers');
+    const logo = document.getElementById('logo');
+
+    function createParticles(container, count, minSize, maxSize, minDuration, maxDuration, className) {
+      for (let i = 0; i < count; i++) {
+        const el = document.createElement('span');
+        const size = minSize + Math.random() * (maxSize - minSize);
+        const duration = minDuration + Math.random() * (maxDuration - minDuration);
+        const delay = Math.random() * -maxDuration;
+
+        el.className = className;
+        el.style.left = Math.random() * 100 + 'vw';
+        el.style.top = Math.random() * 100 + 'vh';
+        el.style.width = size + 'px';
+        el.style.height = size + 'px';
+        el.style.animationDuration = duration + 's';
+        el.style.animationDelay = delay + 's';
+        el.style.opacity = (0.25 + Math.random() * 0.75).toFixed(2);
+
+        container.appendChild(el);
+      }
+    }
+
+    function createGlowBurst() {
+      for (let i = 0; i < 14; i++) {
+        const glow = document.createElement('span');
+        const size = 3 + Math.random() * 7;
+        glow.style.position = 'fixed';
+        glow.style.left = (45 + Math.random() * 10) + 'vw';
+        glow.style.top = (35 + Math.random() * 30) + 'vh';
+        glow.style.width = size + 'px';
+        glow.style.height = size + 'px';
+        glow.style.borderRadius = '50%';
+        glow.style.background = 'rgba(255, 220, 150, 0.95)';
+        glow.style.boxShadow = '0 0 12px rgba(255, 210, 120, 0.9)';
+        glow.style.pointerEvents = 'none';
+        glow.style.zIndex = '3';
+        glow.style.animation = `glowPop ${1.2 + Math.random() * 1.2}s ease-out forwards`;
+        document.body.appendChild(glow);
+
+        setTimeout(() => glow.remove(), 2600);
+      }
+    }
+
+    const extraStyle = document.createElement('style');
+    extraStyle.textContent = `
+      @keyframes glowPop {
+        0%   { transform: scale(0.4); opacity: 0; }
+        20%  { opacity: 1; }
+        100% { transform: scale(2.8); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(extraStyle);
+
+    function removeWhiteBackground(imageElement, threshold = 245) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.src = imageElement.src;
+
+        img.onload = () => {
+          try {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+
+            ctx.drawImage(img, 0, 0);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+
+            for (let i = 0; i < data.length; i += 4) {
+              const r = data[i];
+              const g = data[i + 1];
+              const b = data[i + 2];
+              const a = data[i + 3];
+
+              const isNearWhite = r >= threshold && g >= threshold && b >= threshold;
+              if (a > 0 && isNearWhite) {
+                data[i + 3] = 0;
+              }
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+            imageElement.src = canvas.toDataURL('image/png');
+            resolve(true);
+          } catch (err) {
+            resolve(false);
+          }
+        };
+
+        img.onerror = () => resolve(false);
+      });
+    }
+
+    createParticles(particles, 70, 2, 5, 5, 11, 'particle');
+    createParticles(embers, 24, 3, 8, 3.2, 6.8, 'ember');
+    createGlowBurst();
+
+    const esperaTotal = 5000;
+    const tempoDeSumir = 1400;
+
+    window.addEventListener('load', async () => {
+      await removeWhiteBackground(logo, 246);
+
+      setTimeout(() => {
+        intro.classList.add('fadeOut');
+
+        setTimeout(() => {
+          window.location.href = 'Visualizar-Fichas/Fichas.html';
+        }, tempoDeSumir);
+      }, esperaTotal);
+    });
+  </script>
+</body>
+</html>
